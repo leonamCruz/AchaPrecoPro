@@ -7,6 +7,7 @@ import tech.leonam.achaprecopro.model.ProdutoDTO;
 import tech.leonam.achaprecopro.model.ProdutoEntity;
 import tech.leonam.achaprecopro.repository.ProdutoRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,12 +19,16 @@ public class ProdutoService {
 
     public ProdutoEntity save(ProdutoDTO dto){
         var converted = modelMapper.map(dto, ProdutoEntity.class);
+        converted.setUltimaAlteracao(LocalDateTime.now());
+
         return repository.save(converted);
     }
 
     public ProdutoEntity save(ProdutoDTO dto, Long id){
         var converted = modelMapper.map(dto, ProdutoEntity.class);
         converted.setId(id);
+        converted.setUltimaAlteracao(LocalDateTime.now());
+
         return repository.save(converted);
     }
 

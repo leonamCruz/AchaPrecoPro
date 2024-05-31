@@ -1,6 +1,7 @@
 package tech.leonam.achaprecopro.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,4 @@ public class ProdutoDTO {
     private String price;
     @NotBlank
     private String localizacaoDaImagem;
-    @NotBlank
-    private LocalDateTime ultimaAlteracao;
 }
