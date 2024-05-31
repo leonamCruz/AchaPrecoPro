@@ -7,7 +7,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class ProdutoDTO {
+public class ProdutoSaveDTO {
     @NotBlank
     private String nomeDoProduto;
     @NotBlank
@@ -16,7 +16,5 @@ public class ProdutoDTO {
     private String codBarras;
     @NotBlank
     @Positive
-    private BigDecimal preco;
-    @NotBlank
-    private String localizacaoDaImagem;
+    private String preco;
 }

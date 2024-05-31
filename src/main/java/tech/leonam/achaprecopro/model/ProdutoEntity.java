@@ -20,7 +20,7 @@ public class ProdutoEntity {
     private String nomeDoProduto;
     private String descricaoDoProduto;
     private String codBarras;
-    private String price;
+    private String preco;
     private String localizacaoDaImagem;
     private LocalDateTime ultimaAlteracao;
 
