@@ -40,4 +40,8 @@ public class ProdutoService {
         repository.deleteById(id);
     }
 
+    public ProdutoEntity getByCodigoDeBarras(String codigo) {
+        return repository.findByCodBarras(codigo);
+    }
+
 }

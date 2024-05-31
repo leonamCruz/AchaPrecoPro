@@ -31,6 +31,11 @@ public class ProdutoController {
         return ResponseEntity.ok().body(service.getAll());
     }
 
+    @GetMapping("/{codigo}")
+    public ResponseEntity<ProdutoEntity> getCodBarras(@PathVariable String codigo){
+        return ResponseEntity.ok().body(service.getByCodigoDeBarras(codigo));
+    }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
         service.delete(id);

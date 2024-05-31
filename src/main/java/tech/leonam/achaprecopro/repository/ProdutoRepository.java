@@ -6,4 +6,5 @@ import tech.leonam.achaprecopro.model.ProdutoEntity;
 
 @Repository
 public interface ProdutoRepository extends JpaRepository<ProdutoEntity, Long> {
+    ProdutoEntity findByCodBarras(String codigo);
 }
