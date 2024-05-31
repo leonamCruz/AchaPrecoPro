@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import tech.leonam.achaprecopro.model.ProdutoDTO;
 import tech.leonam.achaprecopro.model.ProdutoEntity;
 import tech.leonam.achaprecopro.model.ProdutoSaveDTO;
 import tech.leonam.achaprecopro.service.ProdutoService;
@@ -53,10 +52,15 @@ public class ProdutoController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProdutoEntity> alter(@RequestPart("produto") @Valid ProdutoDTO dto,
+    public ResponseEntity<ProdutoEntity> alter(@RequestPart("produto") @Valid ProdutoSaveDTO dto,
                                                @RequestPart(value = "imagem") MultipartFile imagem,
                                                @PathVariable Long id) throws IOException {
-        return ResponseEntity.ok().body(service.save(dto, id, imagem));
+        return ResponseEntity.ok().body(service.alteraComImagem(dto, id, imagem));
+    }
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProdutoEntity> alter(@RequestPart("produto") @Valid ProdutoSaveDTO dto,
+                                               @PathVariable Long id) {
+        return ResponseEntity.ok().body(service.alteraSemImagem(dto, id));
     }
 
 }

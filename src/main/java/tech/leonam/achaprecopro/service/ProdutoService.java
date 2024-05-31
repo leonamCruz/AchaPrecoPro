@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import tech.leonam.achaprecopro.model.ProdutoDTO;
 import tech.leonam.achaprecopro.model.ProdutoEntity;
 import tech.leonam.achaprecopro.model.ProdutoSaveDTO;
 import tech.leonam.achaprecopro.repository.ProdutoRepository;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,7 +35,10 @@ public class ProdutoService {
         return repository.save(converted);
     }
 
-    public ProdutoEntity save(ProdutoDTO dto, Long id, MultipartFile imagem) throws IOException {
+    public ProdutoEntity alteraComImagem(ProdutoSaveDTO dto, Long id, MultipartFile imagem) throws IOException {
+        var entidadeDoBancoDeDados = repository.findById(id).orElseThrow();
+        deletaImagem(entidadeDoBancoDeDados.getLocalizacaoDaImagem());
+
         var converted = modelMapper.map(dto, ProdutoEntity.class);
         String imagePath = saveImage(imagem);
 
@@ -46,6 +49,14 @@ public class ProdutoService {
         return repository.save(converted);
     }
 
+    public ProdutoEntity alteraSemImagem(ProdutoSaveDTO dto, Long id){
+        var entidadeDoBancoDeDados = repository.findById(id).orElseThrow();
+
+        modelMapper.map(dto, entidadeDoBancoDeDados);
+        entidadeDoBancoDeDados.setUltimaAlteracao(LocalDateTime.now());
+
+        return repository.save(entidadeDoBancoDeDados);
+    }
     public List<ProdutoEntity> getAll() {
         return repository.findAll();
     }
@@ -72,4 +83,12 @@ public class ProdutoService {
         return filePath;
     }
 
+    private void deletaImagem(String path) throws IOException {
+        Path filePath = Paths.get(path);
+        if (!Files.exists(filePath)) {
+            throw new FileNotFoundException("Imagem não localizada: " + path);
+        }
+
+        Files.delete(filePath);
+    }
 }

@@ -16,7 +16,7 @@ public class ProdutoDTO {
     private String codBarras;
     @NotBlank
     @Positive
-    private BigDecimal preco;
+    private String preco;
     @NotBlank
     private String localizacaoDaImagem;
 }
