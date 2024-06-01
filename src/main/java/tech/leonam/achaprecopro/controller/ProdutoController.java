@@ -2,6 +2,11 @@ package tech.leonam.achaprecopro.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +25,13 @@ import java.util.List;
 public class ProdutoController {
 
     private ProdutoService service;
+    @Value("${diretorio}")
+    private String UPLOAD_DIR;
+
+    @Autowired
+    public ProdutoController(ProdutoService service) {
+        this.service = service;
+    }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProdutoEntity> save(@RequestPart("produto") @Valid ProdutoSaveDTO dto,
@@ -57,10 +69,27 @@ public class ProdutoController {
                                                @PathVariable Long id) throws IOException {
         return ResponseEntity.ok().body(service.alteraComImagem(dto, id, imagem));
     }
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProdutoEntity> alter(@RequestPart("produto") @Valid ProdutoSaveDTO dto,
-                                               @PathVariable Long id) {
-        return ResponseEntity.ok().body(service.alteraSemImagem(dto, id));
+
+    @GetMapping("/imagem/{nomeDoArquivo}")
+    @ResponseBody
+    public ResponseEntity<Resource> baixaImagem(@PathVariable String nomeDoArquivo){
+        var arquivo = new FileSystemResource(UPLOAD_DIR + nomeDoArquivo);
+
+        if (!arquivo.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+        String extensao = "";
+        int dotIndex = nomeDoArquivo.lastIndexOf(".");
+        if (dotIndex >= 0) {
+            extensao = nomeDoArquivo.substring(dotIndex + 1);
+        }
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=foto_do_produto." + extensao);
+
+        return ResponseEntity.ok()
+                .headers(httpHeaders)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(arquivo);
     }
 
 }

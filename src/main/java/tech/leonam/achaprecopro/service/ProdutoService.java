@@ -2,6 +2,8 @@ package tech.leonam.achaprecopro.service;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import tech.leonam.achaprecopro.model.ProdutoEntity;
@@ -20,10 +22,16 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class ProdutoService {
-
     private ProdutoRepository repository;
     private ModelMapper modelMapper;
-    private static final String UPLOAD_DIR = "imagem_dos_produtos/";
+    @Value("${diretorio}")
+    private String UPLOAD_DIR;
+
+    @Autowired
+    public ProdutoService(ProdutoRepository repository, ModelMapper modelMapper) {
+        this.repository = repository;
+        this.modelMapper = modelMapper;
+    }
 
     public ProdutoEntity save(ProdutoSaveDTO dto, MultipartFile imagem) throws IOException {
         var converted = modelMapper.map(dto, ProdutoEntity.class);
@@ -47,15 +55,6 @@ public class ProdutoService {
         converted.setUltimaAlteracao(LocalDateTime.now());
 
         return repository.save(converted);
-    }
-
-    public ProdutoEntity alteraSemImagem(ProdutoSaveDTO dto, Long id){
-        var entidadeDoBancoDeDados = repository.findById(id).orElseThrow();
-
-        modelMapper.map(dto, entidadeDoBancoDeDados);
-        entidadeDoBancoDeDados.setUltimaAlteracao(LocalDateTime.now());
-
-        return repository.save(entidadeDoBancoDeDados);
     }
     public List<ProdutoEntity> getAll() {
         return repository.findAll();
@@ -91,4 +90,5 @@ public class ProdutoService {
 
         Files.delete(filePath);
     }
+
 }
