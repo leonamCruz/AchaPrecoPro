@@ -1,5 +1,6 @@
 package tech.leonam.achaprecopro.service;
 
+import jakarta.persistence.EntityExistsException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,10 @@ public class ProdutoService {
     }
 
     public ProdutoEntity save(ProdutoSaveDTO dto, MultipartFile imagem) throws IOException {
+        if(repository.existsProdutoEntityByCodBarras(dto.getCodBarras())){
+            throw new EntityExistsException("Código de BArras já cadastrado");
+        }
+
         var converted = modelMapper.map(dto, ProdutoEntity.class);
         converted.setUltimaAlteracao(LocalDateTime.now());
 
